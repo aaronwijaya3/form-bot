@@ -1,0 +1,16 @@
+{
+  "name": "form-auto-filler-bot",
+  "version": "2.0.0",
+  "description": "Bot otomatis pengisi form Google Apps Script - Report Data Lead AE",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "bot": "node bot.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "puppeteer": "^23.0.0",
+    "ssh2": "^1.17.0",
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bot Dashboard - Report Data Lead AE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --bg-card: #16213e;
+      --bg-input: #0f3460;
+      --border: #1e3a5f;
+      --border-focus: #6c63ff;
+      --text-primary: #e8e8f0;
+      --text-secondary: #8892b0;
+      --text-muted: #5a6480;
+      --accent: #6c63ff;
+      --accent-hover: #7b73ff;
+      --accent-glow: rgba(108, 99, 255, 0.3);
+      --success: #00d68f;
+      --success-bg: rgba(0, 214, 143, 0.1);
+      --error: #ff6b6b;
+      --error-bg: rgba(255, 107, 107, 0.1);
+      --warning: #ffc107;
+      --warning-bg: rgba(255, 193, 7, 0.1);
+      --gradient-1: linear-gradient(135deg, #6c63ff 0%, #3b82f6 100%);
+      --gradient-2: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background Pattern ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(15, 15, 26, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(108, 99, 255, 0.15);
+      padding: 0.75rem 1.5rem;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .header-title {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .header-subtitle {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-badge.idle {
+      background: rgba(88, 100, 128, 0.2);
+      color: var(--text-secondary);
+      border: 1px solid rgba(88, 100, 128, 0.3);
+    }
+
+    .status-badge.running {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid rgba(0, 214, 143, 0.3);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    .status-badge.error {
+      background: var(--error-bg);
+      color: var(--error);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-badge.running .status-dot {
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
+      50% { box-shadow: 0 0 12px 2px rgba(0, 214, 143, 0.15); }
+    }
+
+    /* ── Main Layout ── */
+    .main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .main { grid-template-columns: 1fr; }
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    .card:hover {
+      border-color: rgba(108, 99, 255, 0.25);
+    }
+
+    .card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-header-icon {
+      font-size: 1rem;
+    }
+
+    .card-header h2 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+    }
+
+    .card-body {
+      padding: 1.25rem;
+    }
+
+    /* ── Form Elements ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .form-label .required {
+      color: var(--error);
+      margin-left: 2px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--text-primary);
+      font-family: inherit;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238892b0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.8rem center;
+      padding-right: 2rem;
+    }
+
+    .form-select option {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .checkbox-group-container {
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem;
+      background: var(--bg-primary);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.5rem;
+      transition: border-color 0.2s;
+    }
+    .checkbox-group-container:focus-within {
+      border-color: var(--border-focus);
+    }
+    .ae-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 0.35rem 0.5rem;
+      border-radius: 6px;
+      transition: background 0.2s;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .ae-checkbox-label:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    .ae-checkbox-label input {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .form-hint {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* ── Tags Input ── */
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0.5rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      min-height: 38px;
+      cursor: text;
+      transition: all 0.2s;
+    }
+
+    .tags-container:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.5rem;
+      background: rgba(108, 99, 255, 0.15);
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .tag-remove {
+      cursor: pointer;
+      opacity: 0.6;
+      font-size: 0.85rem;
+      line-height: 1;
+      transition: opacity 0.15s;
+    }
+
+    .tag-remove:hover { opacity: 1; }
+
+    .tags-input {
+      border: none;
+      background: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      font-family: inherit;
+      flex: 1;
+      min-width: 80px;
+    }
+
+    .tags-input::placeholder { color: var(--text-muted); }
+
+    /* ── Slider ── */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .slider-value {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--accent-glow);
+      transition: transform 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* ── Toggle ── */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+    }
+
+    .toggle-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .toggle-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .toggle-desc {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle input { display: none; }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: var(--accent);
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+      background: white;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-primary {
+      background: var(--gradient-1);
+      color: white;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px var(--accent-glow);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .btn-group .btn { flex: 1; }
+
+    /* ── Log Console ── */
+    .log-section {
+      grid-column: 1 / -1;
+    }
+
+    .log-console {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      height: 350px;
+      overflow-y: auto;
+      padding: 0.75rem;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.72rem;
+      line-height: 1.7;
+    }
+
+    .log-console::-webkit-scrollbar { width: 6px; }
+    .log-console::-webkit-scrollbar-track { background: transparent; }
+    .log-console::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    .log-line {
+      padding: 0.1rem 0;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .log-time {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .log-msg { word-break: break-word; }
+
+    .log-line.success .log-msg { color: var(--success); }
+    .log-line.error .log-msg { color: var(--error); }
+    .log-line.warning .log-msg { color: var(--warning); }
+    .log-line.info .log-msg { color: var(--text-secondary); }
+    .log-line.bot .log-msg { color: var(--accent); }
+    .log-line.system .log-msg { color: #c084fc; }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-value.total { color: var(--text-primary); }
+    .stat-value.success { color: var(--success); }
+    .stat-value.failed { color: var(--error); }
+    .stat-value.progress { color: var(--accent); }
+
+    /* ── Separator ── */
+    .separator {
+      height: 1px;
+      background: var(--border);
+      margin: 0.8rem 0;
+    }
+
+    /* ── Section Title ── */
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .main { padding: 1rem; }
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card { animation: fadeIn 0.4s ease-out backwards; }
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.2s; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* ── Progress Bar ── */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--gradient-1);
+      border-radius: 3px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="header-icon">🤖</div>
+        <div>
+          <div class="header-title">Bot Dashboard</div>
+          <div class="header-subtitle">Report Data Lead AE • MoraRepublic</div>
+        </div>
+      </div>
+      <div class="status-badge idle" id="statusBadge">
+        <div class="status-dot"></div>
+        <span id="statusText">Idle</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <span class="stat-label">Target</span>
+        <span class="stat-value total" id="statTarget">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Progress</span>
+        <span class="stat-value progress" id="statProgress">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Berhasil</span>
+        <span class="stat-value success" id="statSuccess">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Gagal</span>
+        <span class="stat-value failed" id="statFailed">0</span>
+      </div>
+    </div>
+
+    <!-- Left Column: Identitas AE -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-icon">👤</span>
+        <h2>Identitas AE & Wilayah</h2>
+      </div>
+      <div class="card-body">
+        <div class="section-title">Wilayah Kerja</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Area <span class="required">*</span></label>
+            <select class="form-select" id="inputArea" onchange="onAreaChanged()">
+              <option value="REGULER">REGULER</option>
+              <option value="RING & ECO">RING & ECO</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kota <span class="required">*</span></label>
+            <select class="form-select" id="inputKota" onchange="onKotaChanged()">
+              <option value="">-- Pilih Kota --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Branch Manager (BM)</label>
+            <select class="form-select" id="inputBM" disabled>
+              <option value="">-- Pilih BM --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">ASM (Otomatis)</label>
+            <input class="form-input" type="text" id="inputASM" value="OTOMATIS" disabled style="opacity: 0.6; cursor: not-allowed; background: var(--bg-primary);" />
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+              <span>Daftar AE (Centang untuk memilih, maks 20) <span class="required">*</span></span>
+              <label style="font-size: 0.7rem; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 0.2rem; margin: 0; user-select: none;">
+                <input type="checkbox" id="checkAllAE" disabled style="width: 13px; height: 13px;" /> Pilih Semua
+              </label>
+            </label>
+            <div id="aeCheckboxContainer" class="checkbox-group-container">
+              <div style="font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem; text-align: center; grid-column: span 2;">-- Pilih ASM terlebih dahulu --</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Cluster</label>
+            <input class="form-input" type="text" value="[Dipilih Random dari Form]" disabled style="opacity: 0.6; cursor: not-allowed; background: var(--bg-primary);" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Data Capel -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-icon">📝</span>
+        <h2>Data Calon Pelanggan</h2>
+      </div>
+      <div class="card-body">
+        <div class="section-title">Nama Calon Pelanggan</div>
+        <div class="form-group" style="margin-bottom: 0.8rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; cursor: pointer; background: rgba(108, 99, 255, 0.08); padding: 0.6rem 0.8rem; border-radius: 10px; border: 1px dashed var(--accent);">
+            <input type="checkbox" id="toggleUseDbNames" checked onchange="toggleCustomNamesUI()" style="width: 16px; height: 16px; accent-color: var(--accent);" />
+            <div>
+              <strong>Gunakan Database 2000+ Nama Pelanggan</strong>
+              <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 0.1rem;">Bot akan memilih nama acak dari database internal (rekomendasi)</div>
+            </div>
+          </label>
+        </div>
+
+        <div id="customNamesContainer" style="display: none;">
+          <div class="form-group">
+            <label class="form-label">Nama Kustom (Opsional)</label>
+            <div class="tags-container" id="tagsNama" onclick="document.getElementById('tagInputNama').focus()">
+              <input class="tags-input" id="tagInputNama" placeholder="Ketik nama kustom, tekan Enter..." />
+            </div>
+            <span class="form-hint">Bot akan memilih secara random dari daftar kustom ini</span>
+          </div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="section-title">Alamat</div>
+        <div class="form-group">
+          <input class="form-input" type="text" value="[Alamat Digenerate Random Otomatis]" disabled style="opacity: 0.6; cursor: not-allowed; background: var(--bg-primary);" />
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="section-title">Daftar ISP & Status Lead</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">ISP (pisahkan koma)</label>
+            <input class="form-input" type="text" id="inputISP" value="Indihome, Biznet, MNC Play, Tidak Ada, MyRepublic" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status Lead</label>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.2rem;">
+              <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; cursor: pointer;">
+                <input type="checkbox" value="COOL" class="status-check" checked> COOL
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; cursor: pointer;">
+                <input type="checkbox" value="WARM" class="status-check" checked> WARM
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; cursor: pointer;">
+                <input type="checkbox" value="HOT" class="status-check" checked> HOT
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; cursor: pointer;">
+                <input type="checkbox" value="CLOSING" class="status-check" checked> CLOSING
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Card (Left) -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-icon">⚙️</span>
+        <h2>Pengaturan Bot</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Jumlah Submission</label>
+          <div class="slider-row">
+            <input type="range" id="sliderSubmissions" min="1" max="100" value="10" oninput="document.getElementById('valSubmissions').textContent=this.value" />
+            <span class="slider-value" id="valSubmissions">10</span>
+          </div>
+        </div>
+
+
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Delay Min (detik)</label>
+            <input class="form-input" type="number" id="inputDelayMin" value="3" min="1" max="30" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Delay Max (detik)</label>
+            <input class="form-input" type="number" id="inputDelayMax" value="6" min="2" max="60" />
+          </div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Auto-Generate No HP</span>
+            <span class="toggle-desc">Generate nomor HP random otomatis (08xxx)</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="toggleAutoHP" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Tampilkan Browser</span>
+            <span class="toggle-desc">Lihat proses browser saat berjalan</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="toggleShowBrowser" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Control Card (Right) -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-icon">🚀</span>
+        <h2>Kontrol Bot</h2>
+      </div>
+      <div class="card-body" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 240px;">
+        <div>
+          <div class="form-group">
+            <label class="form-label">URL Form Target</label>
+            <input class="form-input" type="url" id="inputURL"
+              value="https://script.google.com/macros/s/AKfycbwSM6dh2oTU3SPgEwmSCCbdncvAUXry3IW61DFJUad5EJ38wzHc5FZIhQBgxRR4lAc3/exec"
+              style="font-size: 0.7rem;" />
+          </div>
+
+          <div class="separator"></div>
+
+          <div style="background: var(--bg-primary); border-radius: 10px; padding: 0.8rem; border: 1px solid var(--border);">
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600;">RINGKASAN KONFIGURASI</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.8;" id="configSummary">
+              Belum dikonfigurasi...
+            </div>
+          </div>
+
+          <div class="progress-bar-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="btnStart" onclick="startBot()">
+            ▶ Mulai Bot
+          </button>
+          <button class="btn btn-danger" id="btnStop" onclick="stopBot()" style="display: none;">
+            ⬛ Stop
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Console -->
+    <div class="card log-section">
+      <div class="card-header">
+        <span class="card-header-icon">📟</span>
+        <h2>Live Console</h2>
+        <div style="margin-left: auto;">
+          <button onclick="clearLogs()" style="background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.65rem; cursor: pointer; font-family: inherit; font-weight: 600;">CLEAR</button>
+        </div>
+      </div>
+      <div class="log-console" id="logConsole">
+        <div class="log-line system">
+          <span class="log-time">[system]</span>
+          <span class="log-msg">Dashboard siap. Konfigurasi data lalu klik "Mulai Bot" untuk memulai.</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ── Tags Data Store ──
+    const tagsData = {
+      nama: [],
+      alamat: [],
+    };
+
+    // ── WebSocket Connection ──
+    let ws = null;
+    let isRunning = false;
+
+    function connectWS() {
+      const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+      ws = new WebSocket(`${protocol}://${location.host}`);
+
+      ws.onopen = () => addLog('Terhubung ke server dashboard.', 'system');
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          handleWSMessage(data);
+        } catch (e) {
+          addLog(event.data, 'info');
+        }
+      };
+
+      ws.onclose = () => {
+        addLog('Koneksi terputus. Mencoba reconnect...', 'warning');
+        setTimeout(connectWS, 3000);
+      };
+
+      ws.onerror = () => {};
+    }
+
+    function handleWSMessage(data) {
+      switch (data.type) {
+        case 'log':
+          addLog(data.message, data.level || 'info');
+          break;
+        case 'progress':
+          updateProgress(data);
+          break;
+        case 'status':
+          updateBotStatus(data.status);
+          break;
+        case 'result':
+          showResult(data);
+          break;
+      }
+    }
+
+    // ── Log Console ──
+    function addLog(message, level = 'info') {
+      const console = document.getElementById('logConsole');
+      const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const line = document.createElement('div');
+      line.className = `log-line ${level}`;
+      line.innerHTML = `<span class="log-time">[${time}]</span><span class="log-msg">${escapeHtml(message)}</span>`;
+      console.appendChild(line);
+      console.scrollTop = console.scrollHeight;
+    }
+
+    function clearLogs() {
+      document.getElementById('logConsole').innerHTML = '';
+      addLog('Console dibersihkan.', 'system');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ── Tags Input Logic ──
+    function setupTagsInput(containerId, inputId, dataKey) {
+      const input = document.getElementById(inputId);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && input.value.trim()) {
+          e.preventDefault();
+          const val = input.value.trim();
+          tagsData[dataKey].push(val);
+          renderTags(containerId, inputId, dataKey);
+          input.value = '';
+          updateSummary();
+        }
+        if (e.key === 'Backspace' && !input.value && tagsData[dataKey].length > 0) {
+          tagsData[dataKey].pop();
+          renderTags(containerId, inputId, dataKey);
+          updateSummary();
+        }
+      });
+    }
+
+    function renderTags(containerId, inputId, dataKey) {
+      const container = document.getElementById(containerId);
+      const input = document.getElementById(inputId);
+      container.innerHTML = '';
+      tagsData[dataKey].forEach((tag, idx) => {
+        const el = document.createElement('span');
+        el.className = 'tag';
+        el.innerHTML = `${escapeHtml(tag)} <span class="tag-remove" onclick="removeTag('${dataKey}', ${idx}, '${containerId}', '${inputId}')">&times;</span>`;
+        container.appendChild(el);
+      });
+      container.appendChild(input);
+    }
+
+    function removeTag(dataKey, idx, containerId, inputId) {
+      tagsData[dataKey].splice(idx, 1);
+      renderTags(containerId, inputId, dataKey);
+      updateSummary();
+    }
+
+    function toggleCustomNamesUI() {
+      const useDb = document.getElementById('toggleUseDbNames').checked;
+      document.getElementById('customNamesContainer').style.display = useDb ? 'none' : 'block';
+      updateSummary();
+    }
+
+    // ── Config Summary ──
+    function updateSummary() {
+      const area = document.getElementById('inputArea').value;
+      const kota = document.getElementById('inputKota').value || '-';
+      const subs = document.getElementById('sliderSubmissions').value;
+      const aeCheckboxes = document.querySelectorAll('.ae-check:checked');
+      const aeCount = aeCheckboxes.length;
+      const statusChecks = document.querySelectorAll('.status-check:checked');
+      const statuses = Array.from(statusChecks).map(c => c.value).join(', ');
+      const useDb = document.getElementById('toggleUseDbNames').checked;
+      const namaSource = useDb ? 'Database 2000+' : `${tagsData.nama.length} data kustom`;
+
+      document.getElementById('configSummary').innerHTML = `
+        <strong>Area:</strong> ${area} &nbsp;|&nbsp; <strong>Kota:</strong> ${kota}<br>
+        <strong>AE Terpilih:</strong> ${aeCount} AE (${aeCount} Bot paralel)<br>
+        <strong>Nama:</strong> ${namaSource} &nbsp;|&nbsp; <strong>Submit:</strong> ${subs}x total<br>
+        <strong>Status:</strong> ${statuses || 'Tidak ada'}
+      `;
+
+      document.getElementById('statTarget').textContent = subs;
+    }
+
+    // ── Progress Update ──
+    function updateProgress(data) {
+      document.getElementById('statProgress').textContent = data.current || 0;
+      document.getElementById('statSuccess').textContent = data.success || 0;
+      document.getElementById('statFailed').textContent = data.failed || 0;
+
+      const total = parseInt(document.getElementById('statTarget').textContent) || 1;
+      const current = data.current || 0;
+      const pct = Math.round((current / total) * 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    function updateBotStatus(status) {
+      const badge = document.getElementById('statusBadge');
+      const text = document.getElementById('statusText');
+      badge.className = 'status-badge ' + status;
+
+      if (status === 'running') {
+        text.textContent = 'Running';
+        isRunning = true;
+        document.getElementById('btnStart').style.display = 'none';
+        document.getElementById('btnStop').style.display = 'flex';
+        document.getElementById('progressContainer').style.display = 'block';
+      } else if (status === 'idle') {
+        text.textContent = 'Idle';
+        isRunning = false;
+        document.getElementById('btnStart').style.display = 'flex';
+        document.getElementById('btnStop').style.display = 'none';
+      } else if (status === 'error') {
+        text.textContent = 'Error';
+        isRunning = false;
+        document.getElementById('btnStart').style.display = 'flex';
+        document.getElementById('btnStop').style.display = 'none';
+      }
+    }
+
+    function showResult(data) {
+      updateBotStatus('idle');
+      document.getElementById('progressBar').style.width = '100%';
+      addLog(`═══ SELESAI! Berhasil: ${data.success}, Gagal: ${data.failed}, Total: ${data.total} ═══`, 'success');
+    }
+
+    // ── Collect Config ──
+    function collectConfig() {
+      const statusChecks = document.querySelectorAll('.status-check:checked');
+      const useDb = document.getElementById('toggleUseDbNames').checked;
+      const aeCheckboxes = document.querySelectorAll('.ae-check:checked');
+      const aes = Array.from(aeCheckboxes).map(cb => cb.value);
+
+      return {
+        formUrl: document.getElementById('inputURL').value,
+        area: document.getElementById('inputArea').value,
+        kota: document.getElementById('inputKota').value,
+        bm: document.getElementById('inputBM').value,
+        asm: document.getElementById('inputASM').value,
+        aes: aes,
+        totalSubmissions: parseInt(document.getElementById('sliderSubmissions').value),
+        delayMin: parseInt(document.getElementById('inputDelayMin').value) * 1000,
+        delayMax: parseInt(document.getElementById('inputDelayMax').value) * 1000,
+        autoGenerateHP: document.getElementById('toggleAutoHP').checked,
+        showBrowser: document.getElementById('toggleShowBrowser').checked,
+        useDatabaseNames: useDb,
+        namaCapel: tagsData.nama,
+        ispList: document.getElementById('inputISP').value.split(',').map(s => s.trim()).filter(Boolean),
+        statusLead: Array.from(statusChecks).map(c => c.value),
+      };
+    }
+
+    // ── Validate ──
+    function validateConfig(cfg) {
+      const errors = [];
+      if (!cfg.kota) errors.push('Kota wajib diisi');
+      if (!cfg.asm) errors.push('ASM wajib diisi');
+      if (cfg.aes.length === 0) errors.push('Minimal 1 AE harus dicentang');
+      if (cfg.aes.length > 20) errors.push('Maksimal 20 AE yang dapat dipilih bersamaan');
+      if (!cfg.useDatabaseNames && cfg.namaCapel.length === 0) {
+        errors.push('Minimal 1 Nama Capel kustom harus ditambahkan jika tidak menggunakan database');
+      }
+      if (cfg.statusLead.length === 0) errors.push('Minimal 1 Status Lead harus dipilih');
+      if (cfg.ispList.length === 0) errors.push('Minimal 1 ISP harus diisi');
+      return errors;
+    }
+
+    // ── Start Bot ──
+    function startBot() {
+      const cfg = collectConfig();
+      const errors = validateConfig(cfg);
+
+      if (errors.length > 0) {
+        errors.forEach(e => addLog('⚠ Validasi: ' + e, 'error'));
+        return;
+      }
+
+      addLog('Mengirim konfigurasi ke server...', 'bot');
+
+      // Reset stats
+      document.getElementById('statProgress').textContent = '0';
+      document.getElementById('statSuccess').textContent = '0';
+      document.getElementById('statFailed').textContent = '0';
+      document.getElementById('progressBar').style.width = '0%';
+
+      fetch('/api/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cfg),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            addLog('Bot dimulai!', 'success');
+          } else {
+            addLog('Gagal memulai bot: ' + data.error, 'error');
+          }
+        })
+        .catch(err => addLog('Network error: ' + err.message, 'error'));
+    }
+
+    // ── Stop Bot ──
+    function stopBot() {
+      fetch('/api/stop', { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+          addLog('Perintah stop dikirim.', 'warning');
+        })
+        .catch(err => addLog('Network error: ' + err.message, 'error'));
+    }
+
+    // ── Cascading Dropdowns Logic ──
+    let masterData = null;
+
+    async function loadMasterData() {
+      addLog('Mengambil data master dari Google Apps Script...', 'system');
+      try {
+        const response = await fetch('/api/master-data');
+        const res = await response.json();
+        if (res.success && res.data) {
+          masterData = res.data;
+          addLog('Berhasil memuat data master wilayah!', 'success');
+          populateKotas();
+        } else {
+          addLog('Gagal memuat data master: ' + res.error, 'error');
+        }
+      } catch (err) {
+        addLog('Kesalahan koneksi mengambil data master: ' + err.message, 'error');
+      }
+    }
+
+    function resetAECheckboxes() {
+      const container = document.getElementById('aeCheckboxContainer');
+      container.innerHTML = '<div style="font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem; text-align: center; grid-column: span 2;">-- Pilih Kota terlebih dahulu --</div>';
+      const checkAll = document.getElementById('checkAllAE');
+      if (checkAll) {
+        checkAll.checked = false;
+        checkAll.disabled = true;
+      }
+    }
+
+    function populateKotas() {
+      if (!masterData) return;
+      const area = document.getElementById('inputArea').value;
+      const kotaSelect = document.getElementById('inputKota');
+      
+      kotaSelect.innerHTML = '<option value="">-- Pilih Kota --</option>';
+      document.getElementById('inputBM').innerHTML = '<option value="">-- Pilih BM --</option>';
+      resetSelect('inputASM', 'Pilih ASM');
+      resetAECheckboxes();
+
+      const kotas = masterData.kotaMap.filter(item => item.area === area);
+      
+      kotas.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.kota;
+        opt.textContent = item.kota;
+        kotaSelect.appendChild(opt);
+      });
+      updateSummary();
+    }
+
+    function onAreaChanged() {
+      populateKotas();
+    }
+
+    function onKotaChanged() {
+      if (!masterData) return;
+      const kota = document.getElementById('inputKota').value;
+      const bmSelect = document.getElementById('inputBM');
+      const container = document.getElementById('aeCheckboxContainer');
+      const checkAll = document.getElementById('checkAllAE');
+      
+      bmSelect.innerHTML = '<option value="">-- Pilih BM --</option>';
+      container.innerHTML = '';
+      checkAll.checked = false;
+      checkAll.disabled = !kota;
+
+      const cityData = masterData.kotaMap.find(item => item.kota === kota);
+      if (cityData) {
+        const opt = document.createElement('option');
+        opt.value = cityData.bm;
+        opt.textContent = cityData.bm;
+        bmSelect.appendChild(opt);
+        bmSelect.value = cityData.bm;
+
+        // Find all ASMs for this BM
+        const asms = masterData.asmMap[cityData.bm] || [];
+        
+        let totalAEsCount = 0;
+        asms.forEach(asm => {
+          const aes = masterData.aeMap[asm] || [];
+          if (aes.length > 0) {
+            // Render ASM Subheader
+            const header = document.createElement('div');
+            header.style.gridColumn = '1 / -1';
+            header.style.fontWeight = '700';
+            header.style.fontSize = '0.75rem';
+            header.style.color = 'var(--accent)';
+            header.style.marginTop = '0.6rem';
+            header.style.borderBottom = '1px dashed var(--border)';
+            header.style.paddingBottom = '0.2rem';
+            header.style.display = 'flex';
+            header.style.alignItems = 'center';
+            header.style.gap = '0.3rem';
+            header.innerHTML = `<span>👤 ASM: ${asm}</span>`;
+            container.appendChild(header);
+
+            aes.forEach(ae => {
+              totalAEsCount++;
+              const label = document.createElement('label');
+              label.className = 'ae-checkbox-label';
+              
+              const cb = document.createElement('input');
+              cb.type = 'checkbox';
+              cb.value = ae;
+              cb.className = 'ae-check';
+              cb.addEventListener('change', (e) => {
+                const checked = document.querySelectorAll('.ae-check:checked');
+                if (checked.length > 20) {
+                  alert('Maksimal 20 AE yang dapat dipilih secara bersamaan.');
+                  e.target.checked = false;
+                }
+                const allCheckboxes = document.querySelectorAll('.ae-check');
+                const checkedCheckboxes = document.querySelectorAll('.ae-check:checked');
+                checkAll.checked = (allCheckboxes.length === checkedCheckboxes.length);
+                updateSummary();
+              });
+
+              label.appendChild(cb);
+              label.appendChild(document.createTextNode(' ' + ae));
+              container.appendChild(label);
+            });
+          }
+        });
+
+        if (totalAEsCount === 0) {
+          container.innerHTML = '<div style="font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem; text-align: center; grid-column: span 2;">Tidak ada AE untuk kota ini</div>';
+          checkAll.disabled = true;
+        }
+
+        // Wire Select All checkbox
+        checkAll.onclick = () => {
+          const allCheckboxes = document.querySelectorAll('.ae-check');
+          if (checkAll.checked) {
+            let count = 0;
+            allCheckboxes.forEach((cb) => {
+              if (count < 20) {
+                cb.checked = true;
+                count++;
+              } else {
+                cb.checked = false;
+              }
+            });
+            if (allCheckboxes.length > 20) {
+              alert('Pilih Semua mencentang 20 AE pertama untuk mencegah overload CPU.');
+              checkAll.checked = false;
+            }
+          } else {
+            allCheckboxes.forEach(cb => cb.checked = false);
+          }
+          updateSummary();
+        };
+      } else {
+        container.innerHTML = '<div style="font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem; text-align: center; grid-column: span 2;">-- Pilih Kota terlebih dahulu --</div>';
+        checkAll.disabled = true;
+      }
+      updateSummary();
+    }
+
+    function onASMChanged() {}
+
+    function resetSelect(id, defaultText) {
+      const select = document.getElementById(id);
+      select.innerHTML = `<option value="">-- ${defaultText} --</option>`;
+      select.disabled = true;
+    }
+
+    // ── Init ──
+    document.addEventListener('DOMContentLoaded', () => {
+      setupTagsInput('tagsNama', 'tagInputNama', 'nama');
+
+      // Add default data
+      ['Budi Santoso', 'Siti Rahayu', 'Ahmad Pratama', 'Dewi Lestari', 'Rizki Ramadhan'].forEach(n => tagsData.nama.push(n));
+      renderTags('tagsNama', 'tagInputNama', 'nama');
+
+      // Listen for changes to update summary
+      document.querySelectorAll('input, select').forEach(el => {
+        el.addEventListener('change', updateSummary);
+        el.addEventListener('input', updateSummary);
+      });
+
+      updateSummary();
+      connectWS();
+      loadMasterData();
+    });
+  </script>
+</body>
+</html>
