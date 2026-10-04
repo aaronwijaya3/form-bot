@@ -153,6 +153,11 @@
       50% { box-shadow: 0 0 12px 2px rgba(0, 214, 143, 0.15); }
     }
 
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     /* ── Main Layout ── */
     .main {
       position: relative;
@@ -528,6 +533,18 @@
       transform: translateY(-1px);
     }
 
+    .btn-secondary {
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
     .btn-group {
       display: flex;
       gap: 0.75rem;
@@ -690,9 +707,216 @@
       transition: width 0.5s ease;
       width: 0%;
     }
+
+    /* ── AE Tags ── */
+    .ae-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+    .ae-tag-remove {
+      cursor: pointer;
+      color: var(--error);
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-left: 0.2rem;
+    }
+    .ae-tag-remove:hover {
+      color: #ff4a4a;
+    }
+
+    /* ── PIN Overlay ── */
+    .pin-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(15, 15, 26, 0.95);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .pin-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.2rem 2rem;
+      width: 100%;
+      max-width: 350px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(108, 99, 255, 0.15);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .pin-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 10px rgba(108, 99, 255, 0.4));
+    }
+
+    .pin-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .pin-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.4;
+    }
+
+    .pin-input-container {
+      margin-bottom: 1rem;
+    }
+
+    #pinInput {
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem;
+      font-size: 1.5rem;
+      text-align: center;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      font-weight: 700;
+      outline: none;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    #pinInput:focus {
+      border-color: var(--border-focus);
+    }
+
+    .pin-error-msg {
+      font-size: 0.75rem;
+      color: var(--error);
+      margin-bottom: 1rem;
+      min-height: 1.2rem;
+      font-weight: 600;
+    }
+
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .pin-key {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      margin: 0 auto;
+      font-size: 1.25rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      user-select: none;
+      outline: none;
+    }
+
+    .pin-key:hover {
+      background: rgba(108, 99, 255, 0.15);
+      border-color: var(--accent);
+      transform: scale(1.08);
+      box-shadow: 0 0 10px rgba(108, 99, 255, 0.2);
+    }
+
+    .pin-key:active {
+      transform: scale(0.95);
+    }
+
+    .pin-key-clear {
+      color: var(--error);
+      font-size: 0.95rem;
+    }
+
+    .pin-key-clear:hover {
+      background: var(--error-bg);
+      border-color: var(--error);
+    }
+
+    .pin-key-back {
+      color: var(--warning);
+      font-size: 1.1rem;
+    }
+
+    .pin-key-back:hover {
+      background: var(--warning-bg);
+      border-color: var(--warning);
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+  <!-- PIN Protection Overlay -->
+  <div id="pinOverlay" class="pin-overlay">
+    <div class="pin-card" id="pinCard">
+      <div class="pin-icon">🔒</div>
+      <h2 class="pin-title">BOT ACCESS</h2>
+      <p class="pin-subtitle">Masukkan PIN Keamanan untuk mengakses dashboard bot</p>
+      
+      <div class="pin-input-container">
+        <input type="password" id="pinInput" placeholder="••••" readonly />
+      </div>
+
+      <div id="pinErrorMsg" class="pin-error-msg"></div>
+
+      <div class="pin-keypad">
+        <button class="pin-key" onclick="pressPinKey('1')">1</button>
+        <button class="pin-key" onclick="pressPinKey('2')">2</button>
+        <button class="pin-key" onclick="pressPinKey('3')">3</button>
+        <button class="pin-key" onclick="pressPinKey('4')">4</button>
+        <button class="pin-key" onclick="pressPinKey('5')">5</button>
+        <button class="pin-key" onclick="pressPinKey('6')">6</button>
+        <button class="pin-key" onclick="pressPinKey('7')">7</button>
+        <button class="pin-key" onclick="pressPinKey('8')">8</button>
+        <button class="pin-key" onclick="pressPinKey('9')">9</button>
+        <button class="pin-key pin-key-clear" onclick="pressPinKey('C')">C</button>
+        <button class="pin-key" onclick="pressPinKey('0')">0</button>
+        <button class="pin-key pin-key-back" onclick="pressPinKey('B')">⌫</button>
+      </div>
+
+      <button class="btn btn-primary" id="btnSubmitPin" onclick="submitPin()" style="width: 100%; margin-top: 0.5rem;">
+        🔓 MASUK
+      </button>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="header">
     <div class="header-inner">
@@ -733,11 +957,29 @@
       </div>
     </div>
 
+    <!-- Browser Status Section -->
+    <div class="card" id="browserProgressSection" style="grid-column: 1 / -1; display: none; margin-bottom: 1.5rem;">
+      <div class="card-header">
+        <span class="card-header-icon">🌐</span>
+        <h2>Status Pengisian Per Browser (AE)</h2>
+      </div>
+      <div class="card-body">
+        <div id="browserProgressContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+          <!-- Will be populated dynamically -->
+        </div>
+      </div>
+    </div>
+
     <!-- Left Column: Identitas AE -->
     <div class="card">
-      <div class="card-header">
-        <span class="card-header-icon">👤</span>
-        <h2>Identitas AE & Wilayah</h2>
+      <div class="card-header" style="justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span class="card-header-icon">👤</span>
+          <h2>Identitas AE & Wilayah</h2>
+        </div>
+        <button type="button" class="btn btn-secondary" id="btnSyncMaster" onclick="syncMasterData()" style="padding: 0.3rem 0.6rem; font-size: 0.65rem; border-radius: 6px; text-transform: uppercase;">
+          🔄 Sync Data
+        </button>
       </div>
       <div class="card-body">
         <div class="section-title">Wilayah Kerja</div>
@@ -767,13 +1009,19 @@
           </div>
           <div class="form-group" style="grid-column: span 2;">
             <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
-              <span>Daftar AE (Centang untuk memilih, maks 20) <span class="required">*</span></span>
+              <span>Daftar AE (Centang untuk memilih) <span class="required">*</span></span>
               <label style="font-size: 0.7rem; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 0.2rem; margin: 0; user-select: none;">
                 <input type="checkbox" id="checkAllAE" disabled style="width: 13px; height: 13px;" /> Pilih Semua
               </label>
             </label>
-            <div id="aeCheckboxContainer" class="checkbox-group-container">
+            <div id="aeCheckboxContainer" class="checkbox-group-container" style="margin-bottom: 0.5rem;">
               <div style="font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem; text-align: center; grid-column: span 2;">-- Pilih ASM terlebih dahulu --</div>
+            </div>
+            
+            <!-- Selected AEs tags -->
+            <label class="form-label" style="margin-top: 0.5rem; font-size: 0.7rem;">AE Terpilih (Lintas Kota):</label>
+            <div id="selectedAEsTags" style="display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.5rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 10px; min-height: 40px; align-items: center;">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Belum ada AE yang dipilih...</span>
             </div>
           </div>
           <div class="form-group">
@@ -857,9 +1105,9 @@
       <div class="card-body">
         <div class="form-group">
           <label class="form-label">Jumlah Submission</label>
-          <div class="slider-row">
-            <input type="range" id="sliderSubmissions" min="1" max="100" value="10" oninput="document.getElementById('valSubmissions').textContent=this.value" />
-            <span class="slider-value" id="valSubmissions">10</span>
+          <div class="slider-row" style="display: flex; align-items: center; gap: 1rem;">
+            <input type="range" id="sliderSubmissions" min="1" max="1000" value="10" style="flex: 1;" oninput="document.getElementById('inputNumSubmissions').value=this.value; updateSummary();" />
+            <input type="number" id="inputNumSubmissions" min="1" max="10000" value="10" style="width: 80px; padding: 0.4rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; font-weight: 700; text-align: center;" oninput="document.getElementById('sliderSubmissions').value=this.value; updateSummary();" />
           </div>
         </div>
 
@@ -873,6 +1121,10 @@
           <div class="form-group">
             <label class="form-label">Delay Max (detik)</label>
             <input class="form-input" type="number" id="inputDelayMax" value="6" min="2" max="60" />
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Maksimal Browser Aktif (Paralel)</label>
+            <input class="form-input" type="number" id="inputConcurrency" value="5" min="1" max="100" />
           </div>
         </div>
 
@@ -942,12 +1194,157 @@
       </div>
     </div>
 
+    <!-- Scheduling Section -->
+    <div class="card" id="schedulingSection" style="grid-column: 1 / -1; margin-bottom: 1.5rem;">
+      <div class="card-header">
+        <span class="card-header-icon">⏰</span>
+        <h2>Penjadwalan Bot AE (Background)</h2>
+      </div>
+      <div class="card-body">
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; margin-bottom: 1.5rem; background: var(--bg-primary); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+          <div class="form-group" style="flex: 2; min-width: 200px;">
+            <label class="form-label">Pilih AE</label>
+            <select class="form-select" id="scheduleAE">
+              <option value="">-- Pilih AE --</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 120px;">
+            <label class="form-label">Waktu Eksekusi (Setiap Hari)</label>
+            <input class="form-input" type="time" id="scheduleTime" value="08:00" />
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 100px;">
+            <label class="form-label">Jumlah Submission</label>
+            <input class="form-input" type="number" id="scheduleSubmissions" value="5" min="1" max="100" />
+          </div>
+          <button class="btn btn-primary" onclick="addSchedule()" style="height: 38px; padding: 0 1.5rem; white-space: nowrap;">
+            ➕ Tambah Jadwal
+          </button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">
+            📋 Daftar Jadwal Background AE
+          </div>
+          <button type="button" class="btn" onclick="retryAllFailedSchedules()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-weight: 700; border: none; padding: 0.4rem 0.85rem; font-size: 0.75rem; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+            🔄 Ulangi Semua yang Gagal
+          </button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border); color: var(--text-secondary); font-weight: 700;">
+                <th style="padding: 0.8rem 0.5rem; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em;">AE</th>
+                <th style="padding: 0.8rem 0.5rem; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em;">Branch / ASM</th>
+                <th style="padding: 0.8rem 0.5rem; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; text-align: center;">Waktu</th>
+                <th style="padding: 0.8rem 0.5rem; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; text-align: center;">Submissions</th>
+                <th style="padding: 0.8rem 0.5rem; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; text-align: center;">Aktif</th>
+                <th style="padding: 0.8rem 0.5rem; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em;">Terakhir Dijalankan</th>
+                <th style="padding: 0.8rem 0.5rem; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleTableBody">
+              <tr>
+                <td colspan="7" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Belum ada jadwal dikonfigurasi. Pilih AE dan tentukan waktu di atas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Health & Server Controls Section -->
+    <div class="card" id="systemHealthSection" style="grid-column: 1 / -1; margin-bottom: 1.5rem;">
+      <div class="card-header" style="justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span class="card-header-icon">🛠️</span>
+          <h2>System Health & Server Controls</h2>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" onclick="cleanupSystemCache()" style="padding: 0.35rem 0.75rem; font-size: 0.68rem; border-radius: 8px;">
+            🧹 Bersihkan Cache
+          </button>
+          <button type="button" class="btn btn-danger" onclick="confirmRestartServer()" style="padding: 0.35rem 0.75rem; font-size: 0.68rem; border-radius: 8px;">
+            🔄 Restart Server
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="loadSystemStatus(true)" title="Refresh Metrik" style="padding: 0.35rem 0.6rem; font-size: 0.68rem; border-radius: 8px;">
+            ↻
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+          
+          <!-- Metric: Server Uptime -->
+          <div style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">⏱️ Server Uptime</span>
+              <span class="status-badge running" style="padding: 0.15rem 0.45rem; font-size: 0.6rem;">ONLINE</span>
+            </div>
+            <div id="sysUptimeText" style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-top: 0.2rem;">
+              -
+            </div>
+            <div id="sysStartTimeText" style="font-size: 0.68rem; color: var(--text-secondary);">
+              Started: Memuat...
+            </div>
+          </div>
+
+          <!-- Metric: RAM Usage -->
+          <div style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">💾 RAM (Memory)</span>
+              <span id="sysRamPercentBadge" style="font-size: 0.68rem; font-weight: 700; color: var(--accent);">- %</span>
+            </div>
+            <div id="sysRamText" style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-top: 0.2rem;">
+              - MB
+            </div>
+            <div class="progress-bar-container" style="margin-top: 0.2rem; height: 5px; background: rgba(255,255,255,0.06);">
+              <div id="sysRamProgressBar" class="progress-bar" style="width: 0%; background: var(--gradient-1);"></div>
+            </div>
+            <div id="sysRamNodeDetail" style="font-size: 0.68rem; color: var(--text-secondary); margin-top: 0.1rem;">
+              Node Heap: - MB
+            </div>
+          </div>
+
+          <!-- Metric: Database HP & Jadwal -->
+          <div style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">📱 Data & Deduplikasi</span>
+              <span style="font-size: 0.65rem; color: var(--success); font-weight: 700;">AKTIF</span>
+            </div>
+            <div id="sysDbPhonesText" style="font-size: 1.25rem; font-weight: 800; color: var(--success); margin-top: 0.2rem;">
+              - Nomor HP
+            </div>
+            <div id="sysDbSchedulesText" style="font-size: 0.68rem; color: var(--text-secondary);">
+              Jadwal Aktif: - / -
+            </div>
+          </div>
+
+          <!-- Metric: Platform & Node.js -->
+          <div style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">⚙️ Platform & OS</span>
+              <span id="sysPlatformBadge" style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">VPS</span>
+            </div>
+            <div id="sysNodeVersionText" style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-top: 0.2rem;">
+              Node.js -
+            </div>
+            <div id="sysCpuDetail" style="font-size: 0.68rem; color: var(--text-secondary);">
+              CPU: - Cores
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
     <!-- Log Console -->
     <div class="card log-section">
       <div class="card-header">
         <span class="card-header-icon">📟</span>
         <h2>Live Console</h2>
-        <div style="margin-left: auto;">
+        <div style="margin-left: auto; display: flex; gap: 0.4rem;">
+          <button onclick="downloadLogs()" style="background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.65rem; cursor: pointer; font-family: inherit; font-weight: 600;">DOWNLOAD</button>
           <button onclick="clearLogs()" style="background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.65rem; cursor: pointer; font-family: inherit; font-weight: 600;">CLEAR</button>
         </div>
       </div>
@@ -971,10 +1368,402 @@
     // ── WebSocket Connection ──
     let ws = null;
     let isRunning = false;
+    let schedulesList = [];
+
+    // Helper untuk SweetAlert2
+    function showAlert(title, text, icon = 'info') {
+      return Swal.fire({
+        title,
+        text,
+        icon,
+        background: '#1a1a2e',
+        color: '#e8e8f0',
+        confirmButtonColor: '#6c63ff'
+      });
+    }
+
+    // ── Auth & PIN Logic ──
+    function pressPinKey(key) {
+      const pinInput = document.getElementById('pinInput');
+      const errorMsg = document.getElementById('pinErrorMsg');
+      errorMsg.textContent = ''; // Clear error on interaction
+
+      if (key === 'C') {
+        pinInput.value = '';
+      } else if (key === 'B') {
+        pinInput.value = pinInput.value.slice(0, -1);
+      } else {
+        if (pinInput.value.length < 12) {
+          pinInput.value += key;
+        }
+      }
+    }
+
+    function submitPin() {
+      const pinInput = document.getElementById('pinInput');
+      const pin = pinInput.value;
+      const errorMsg = document.getElementById('pinErrorMsg');
+
+      if (!pin) {
+        errorMsg.textContent = 'Masukkan PIN terlebih dahulu!';
+        shakePinCard();
+        return;
+      }
+
+      fetch('/api/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.success) {
+          localStorage.setItem('bot_pin', pin);
+          hidePinOverlay();
+          connectWS();
+          loadMasterData();
+          loadSettings();
+          loadSchedules();
+          loadSystemStatus();
+          startSystemMonitoring();
+        } else {
+          errorMsg.textContent = res.error || 'PIN salah!';
+          pinInput.value = '';
+          shakePinCard();
+        }
+      })
+      .catch(err => {
+        errorMsg.textContent = 'Koneksi error: ' + err.message;
+        shakePinCard();
+      });
+    }
+
+    function shakePinCard() {
+      const pinCard = document.getElementById('pinCard');
+      pinCard.classList.add('shake');
+      setTimeout(() => {
+        pinCard.classList.remove('shake');
+      }, 400);
+    }
+
+    function showPinOverlay(msg = '') {
+      const overlay = document.getElementById('pinOverlay');
+      overlay.style.display = 'flex';
+      const errorMsg = document.getElementById('pinErrorMsg');
+      if (msg) errorMsg.textContent = msg;
+      
+      // Close active websocket connection if any to prevent auth error loops
+      if (ws) {
+        try { ws.close(); } catch(e) {}
+        ws = null;
+      }
+    }
+
+    function hidePinOverlay() {
+      const overlay = document.getElementById('pinOverlay');
+      overlay.style.display = 'none';
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinErrorMsg').textContent = '';
+    }
+
+    function checkAuth() {
+      const pin = localStorage.getItem('bot_pin');
+      if (!pin) {
+        showPinOverlay();
+      } else {
+        // Silent validation
+        fetch('/api/verify-pin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        })
+        .then(r => r.json())
+        .then(res => {
+          if (res.success) {
+            hidePinOverlay();
+            connectWS();
+            loadMasterData();
+            loadSettings();
+            loadSchedules();
+            loadSystemStatus();
+            startSystemMonitoring();
+          } else {
+            localStorage.removeItem('bot_pin');
+            showPinOverlay('Sesi habis atau PIN berubah. Silakan masukkan ulang.');
+          }
+        })
+        .catch(err => {
+          console.warn('Verifikasi PIN gagal karena koneksi:', err.message);
+          // If connection error, allow showing UI (fallback offline mode)
+          hidePinOverlay();
+          connectWS();
+          loadMasterData();
+          loadSettings();
+          loadSchedules();
+          loadSystemStatus();
+          startSystemMonitoring();
+        });
+      }
+    }
+
+    // Helper for fetch with PIN header
+    function fetchWithAuth(url, options = {}) {
+      const pin = localStorage.getItem('bot_pin') || '';
+      if (!options.headers) {
+        options.headers = {};
+      }
+      options.headers['X-PIN'] = pin;
+      return fetch(url, options).then(async response => {
+        if (response.status === 401) {
+          // Unauthorized, trigger PIN prompt
+          localStorage.removeItem('bot_pin');
+          showPinOverlay('Sesi telah berakhir atau PIN salah.');
+          throw new Error('Unauthorized');
+        }
+        return response;
+      });
+    }
+
+    // ── System Health & Server Controls ──
+    let systemStatusInterval = null;
+
+    function startSystemMonitoring() {
+      if (systemStatusInterval) clearInterval(systemStatusInterval);
+      systemStatusInterval = setInterval(() => {
+        // Only fetch if tab is visible and authenticated
+        if (!document.hidden && localStorage.getItem('bot_pin')) {
+          loadSystemStatus(false);
+        }
+      }, 6000);
+    }
+
+    async function loadSystemStatus(showToast = false) {
+      const pin = localStorage.getItem('bot_pin');
+      if (!pin) return;
+
+      try {
+        const res = await fetchWithAuth('/api/system/status');
+        const data = await res.json();
+        
+        if (data && data.success && data.data) {
+          const sys = data.data;
+
+          // 1. Uptime
+          const uptimeEl = document.getElementById('sysUptimeText');
+          const startEl = document.getElementById('sysStartTimeText');
+          if (uptimeEl && sys.uptime) {
+            uptimeEl.textContent = sys.uptime.processFormatted || '-';
+          }
+          if (startEl && sys.uptime && sys.uptime.startedAt) {
+            const startDate = new Date(sys.uptime.startedAt);
+            startEl.textContent = 'Started: ' + startDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
+          }
+
+          // 2. RAM Usage
+          const ramTextEl = document.getElementById('sysRamText');
+          const ramBadgeEl = document.getElementById('sysRamPercentBadge');
+          const ramProgressEl = document.getElementById('sysRamProgressBar');
+          const ramNodeEl = document.getElementById('sysRamNodeDetail');
+
+          if (sys.memory) {
+            if (ramTextEl) {
+              ramTextEl.textContent = `${sys.memory.systemUsedMB} / ${sys.memory.systemTotalMB} MB`;
+            }
+            if (ramBadgeEl) {
+              ramBadgeEl.textContent = `${sys.memory.systemUsedPercent}%`;
+              if (sys.memory.systemUsedPercent > 85) {
+                ramBadgeEl.style.color = 'var(--error)';
+              } else if (sys.memory.systemUsedPercent > 70) {
+                ramBadgeEl.style.color = 'var(--warning)';
+              } else {
+                ramBadgeEl.style.color = 'var(--accent)';
+              }
+            }
+            if (ramProgressEl) {
+              ramProgressEl.style.width = `${sys.memory.systemUsedPercent}%`;
+              if (sys.memory.systemUsedPercent > 85) {
+                ramProgressEl.style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a24)';
+              } else {
+                ramProgressEl.style.background = 'var(--gradient-1)';
+              }
+            }
+            if (ramNodeEl) {
+              ramNodeEl.textContent = `Node Heap: ${sys.memory.nodeHeapUsedMB} MB (RSS: ${sys.memory.nodeRssMB} MB)`;
+            }
+          }
+
+          // 3. Database Stats
+          const dbPhonesEl = document.getElementById('sysDbPhonesText');
+          const dbSchedulesEl = document.getElementById('sysDbSchedulesText');
+          if (sys.database) {
+            if (dbPhonesEl) {
+              dbPhonesEl.textContent = `${sys.database.totalSubmittedPhones.toLocaleString('id-ID')} Nomor HP`;
+            }
+            if (dbSchedulesEl) {
+              dbSchedulesEl.textContent = `Jadwal Aktif: ${sys.database.activeSchedules} / ${sys.database.totalSchedules}`;
+            }
+          }
+
+          // 4. Platform & OS
+          const nodeVerEl = document.getElementById('sysNodeVersionText');
+          const platformBadgeEl = document.getElementById('sysPlatformBadge');
+          const cpuDetailEl = document.getElementById('sysCpuDetail');
+          if (sys.system) {
+            if (nodeVerEl) {
+              nodeVerEl.textContent = `Node.js ${sys.system.nodeVersion}`;
+            }
+            if (platformBadgeEl) {
+              platformBadgeEl.textContent = `${sys.system.platform.toUpperCase()} (${sys.system.arch})`;
+            }
+          }
+          if (sys.cpu && cpuDetailEl) {
+            cpuDetailEl.textContent = `CPU: ${sys.cpu.cores} Core (${sys.cpu.model.split('@')[0].trim().slice(0, 24)})`;
+          }
+
+          if (showToast) {
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: 'Metrik sistem diperbarui',
+              showConfirmButton: false,
+              timer: 1500,
+              background: '#1a1a2e',
+              color: '#e8e8f0'
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal memuat status sistem:', err.message);
+      }
+    }
+
+    async function confirmRestartServer() {
+      const result = await Swal.fire({
+        title: 'Restart Server Bot?',
+        text: 'Proses bot akan dimulai ulang. Jika berjalan di VPS via PM2, server akan kembali aktif otomatis dalam 2-3 detik.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff6b6b',
+        cancelButtonColor: '#5a6480',
+        confirmButtonText: 'Ya, Restart Sekarang',
+        cancelButtonText: 'Batal',
+        background: '#1a1a2e',
+        color: '#e8e8f0'
+      });
+
+      if (!result.isConfirmed) return;
+
+      // Show reconnecting overlay
+      Swal.fire({
+        title: 'Merestart Server...',
+        html: `
+          <div style="margin: 1.5rem 0;">
+            <div class="spinner" style="width: 36px; height: 36px; border-width: 3px; margin: 0 auto 1rem auto; border-top-color: var(--accent);"></div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Mengirim sinyal restart ke PM2...</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem;">Menunggu server aktif kembali...</div>
+          </div>
+        `,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        background: '#1a1a2e',
+        color: '#e8e8f0'
+      });
+
+      try {
+        await fetchWithAuth('/api/system/restart', { method: 'POST' });
+      } catch (e) {
+        // Ignored as server closes socket on restart
+      }
+
+      // Poll until server is back online
+      let attempts = 0;
+      const maxAttempts = 30;
+      const checkServerOnline = setInterval(async () => {
+        attempts++;
+        try {
+          const res = await fetch('/api/status', { cache: 'no-store' });
+          if (res.ok) {
+            clearInterval(checkServerOnline);
+            Swal.fire({
+              icon: 'success',
+              title: 'Server Berhasil Direstart!',
+              text: 'Koneksi ke bot server telah pulih sepenuhnya.',
+              timer: 2000,
+              showConfirmButton: false,
+              background: '#1a1a2e',
+              color: '#e8e8f0'
+            });
+            connectWS();
+            loadSystemStatus();
+            loadMasterData();
+            loadSettings();
+            loadSchedules();
+          }
+        } catch (err) {
+          if (attempts >= maxAttempts) {
+            clearInterval(checkServerOnline);
+            Swal.fire({
+              icon: 'error',
+              title: 'Gagal Reconnect Otomatis',
+              text: 'Server belum merespon. Silakan muat ulang halaman ini secara manual.',
+              confirmButtonText: 'Muat Ulang Halaman',
+              confirmButtonColor: '#6c63ff',
+              background: '#1a1a2e',
+              color: '#e8e8f0'
+            }).then(() => {
+              window.location.reload();
+            });
+          }
+        }
+      }, 1000);
+    }
+
+    async function cleanupSystemCache() {
+      try {
+        const res = await fetchWithAuth('/api/system/cleanup', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Cache Dibersihkan!',
+            text: 'Cache data master dan alokasi memori internal telah dibersihkan.',
+            timer: 1800,
+            showConfirmButton: false,
+            background: '#1a1a2e',
+            color: '#e8e8f0'
+          });
+          loadSystemStatus();
+          loadMasterData(true);
+        } else {
+          showAlert('Gagal', data.error || 'Gagal membersihkan cache', 'error');
+        }
+      } catch (err) {
+        showAlert('Error', 'Gagal memproses request: ' + err.message, 'error');
+      }
+    }
+
+    // Physical keyboard listener for PIN
+    document.addEventListener('keydown', (e) => {
+      const pinOverlay = document.getElementById('pinOverlay');
+      if (pinOverlay && pinOverlay.style.display !== 'none') {
+        if (e.key >= '0' && e.key <= '9') {
+          pressPinKey(e.key);
+        } else if (e.key === 'Backspace') {
+          pressPinKey('B');
+        } else if (e.key === 'Escape' || e.key === 'Delete') {
+          pressPinKey('C');
+        } else if (e.key === 'Enter') {
+          submitPin();
+        }
+      }
+    });
 
     function connectWS() {
       const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-      ws = new WebSocket(`${protocol}://${location.host}`);
+      const pin = localStorage.getItem('bot_pin') || '';
+      ws = new WebSocket(`${protocol}://${location.host}?pin=${encodeURIComponent(pin)}`);
 
       ws.onopen = () => addLog('Terhubung ke server dashboard.', 'system');
 
@@ -988,8 +1777,12 @@
       };
 
       ws.onclose = () => {
-        addLog('Koneksi terputus. Mencoba reconnect...', 'warning');
-        setTimeout(connectWS, 3000);
+        // Only try to reconnect if not locked out (i.e. PIN overlay is hidden)
+        const pinOverlay = document.getElementById('pinOverlay');
+        if (pinOverlay && pinOverlay.style.display === 'none') {
+          addLog('Koneksi terputus. Mencoba reconnect...', 'warning');
+          setTimeout(connectWS, 3000);
+        }
       };
 
       ws.onerror = () => {};
@@ -1009,6 +1802,13 @@
         case 'result':
           showResult(data);
           break;
+        case 'schedules_updated':
+          schedulesList = data.schedules;
+          renderSchedulesTable();
+          break;
+        case 'worker_status':
+          updateWorkerStatus(data);
+          break;
       }
     }
 
@@ -1026,6 +1826,29 @@
     function clearLogs() {
       document.getElementById('logConsole').innerHTML = '';
       addLog('Console dibersihkan.', 'system');
+    }
+
+    function downloadLogs() {
+      const consoleEl = document.getElementById('logConsole');
+      const lines = Array.from(consoleEl.querySelectorAll('.log-line')).map(line => {
+        const time = line.querySelector('.log-time')?.textContent || '';
+        const msg = line.querySelector('.log-msg')?.textContent || '';
+        return `${time} ${msg}`;
+      });
+      if (lines.length === 0) {
+        alert('Tidak ada log untuk diunduh.');
+        return;
+      }
+      const text = lines.join('\n');
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bot_logs_${new Date().toISOString().slice(0, 10)}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
 
     function escapeHtml(str) {
@@ -1082,23 +1905,25 @@
     // ── Config Summary ──
     function updateSummary() {
       const area = document.getElementById('inputArea').value;
-      const kota = document.getElementById('inputKota').value || '-';
-      const subs = document.getElementById('sliderSubmissions').value;
-      const aeCheckboxes = document.querySelectorAll('.ae-check:checked');
-      const aeCount = aeCheckboxes.length;
+      const subs = parseInt(document.getElementById('inputNumSubmissions').value) || 0;
+      const aeCount = selectedAEs.length;
       const statusChecks = document.querySelectorAll('.status-check:checked');
       const statuses = Array.from(statusChecks).map(c => c.value).join(', ');
       const useDb = document.getElementById('toggleUseDbNames').checked;
       const namaSource = useDb ? 'Database 2000+' : `${tagsData.nama.length} data kustom`;
 
+      // Get unique list of cities from selected AEs
+      const uniqueCities = [...new Set(selectedAEs.map(item => item.kota))];
+      const kotaLabel = uniqueCities.length > 0 ? uniqueCities.join(', ') : '-';
+
       document.getElementById('configSummary').innerHTML = `
-        <strong>Area:</strong> ${area} &nbsp;|&nbsp; <strong>Kota:</strong> ${kota}<br>
+        <strong>Area:</strong> ${area} &nbsp;|&nbsp; <strong>Kota:</strong> ${kotaLabel}<br>
         <strong>AE Terpilih:</strong> ${aeCount} AE (${aeCount} Bot paralel)<br>
-        <strong>Nama:</strong> ${namaSource} &nbsp;|&nbsp; <strong>Submit:</strong> ${subs}x total<br>
+        <strong>Nama:</strong> ${namaSource} &nbsp;|&nbsp; <strong>Submit:</strong> ${subs}x per AE (Total: ${subs * aeCount}x)<br>
         <strong>Status:</strong> ${statuses || 'Tidak ada'}
       `;
 
-      document.getElementById('statTarget').textContent = subs;
+      document.getElementById('statTarget').textContent = subs * aeCount;
     }
 
     // ── Progress Update ──
@@ -1111,6 +1936,89 @@
       const current = data.current || 0;
       const pct = Math.round((current / total) * 100);
       document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    function updateWorkerStatus(data) {
+      const section = document.getElementById('browserProgressSection');
+      const container = document.getElementById('browserProgressContainer');
+      
+      // Make sure the section is visible
+      if (section.style.display === 'none') {
+        section.style.display = 'block';
+      }
+      
+      let card = document.getElementById(`browser-card-${data.workerId}`);
+      if (!card) {
+        // Create the card dynamically if it doesn't exist yet
+        card = document.createElement('div');
+        card.className = 'browser-card';
+        card.id = `browser-card-${data.workerId}`;
+        card.style.background = 'var(--bg-secondary)';
+        card.style.border = '1px solid var(--border)';
+        card.style.borderRadius = '12px';
+        card.style.padding = '1rem';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        card.style.gap = '0.6rem';
+        card.style.transition = 'all 0.3s ease';
+        
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <span style="font-size: 0.9rem;">🌐</span>
+              <strong style="font-size: 0.85rem; color: var(--text-primary);">Browser #${data.workerId}</strong>
+            </div>
+            <span class="badge ${data.badgeClass}" id="browser-badge-${data.workerId}" style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 700; text-transform: uppercase;">${data.badgeClass}</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;" id="browser-ae-${data.workerId}">AE: ${data.aeName}</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted); min-height: 1.2rem; line-height: 1.4;" id="browser-status-text-${data.workerId}">${data.statusText}</div>
+          
+          <div class="progress-bar-container" style="height: 5px; margin-top: 0.2rem; background: var(--bg-primary);">
+            <div class="progress-bar" id="browser-progress-${data.workerId}" style="width: 0%; height: 100%; border-radius: 3px; background: var(--gradient-1); transition: width 0.3s ease;"></div>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.2rem;">
+            <span>Proses: <strong id="browser-count-${data.workerId}">0/${data.targetCount}</strong></span>
+            <div style="display: flex; gap: 0.6rem;">
+              <span style="color: var(--success);">🟢 <strong id="browser-success-${data.workerId}">0</strong></span>
+              <span style="color: var(--error);">🔴 <strong id="browser-failed-${data.workerId}">0</strong></span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+      
+      // Update values
+      const badge = document.getElementById(`browser-badge-${data.workerId}`);
+      badge.textContent = data.badgeClass === 'running' ? 'Active' : data.badgeClass === 'wait' ? 'Delay' : data.badgeClass;
+      badge.className = `badge ${data.badgeClass}`;
+      
+      // Style badge based on state
+      if (data.badgeClass === 'success') {
+        badge.style.background = 'var(--success-bg)';
+        badge.style.color = 'var(--success)';
+      } else if (data.badgeClass === 'error') {
+        badge.style.background = 'var(--error-bg)';
+        badge.style.color = 'var(--error)';
+      } else if (data.badgeClass === 'running') {
+        badge.style.background = 'var(--accent-glow)';
+        badge.style.color = 'var(--accent)';
+      } else if (data.badgeClass === 'wait') {
+        badge.style.background = 'var(--warning-bg)';
+        badge.style.color = 'var(--warning)';
+      } else {
+        badge.style.background = 'var(--bg-primary)';
+        badge.style.color = 'var(--text-muted)';
+      }
+
+      document.getElementById(`browser-status-text-${data.workerId}`).textContent = data.statusText;
+      document.getElementById(`browser-count-${data.workerId}`).textContent = `${data.currentCount}/${data.targetCount}`;
+      document.getElementById(`browser-success-${data.workerId}`).textContent = data.successCount;
+      document.getElementById(`browser-failed-${data.workerId}`).textContent = data.failCount;
+      
+      // Update progress bar
+      const pct = data.targetCount > 0 ? Math.round((data.currentCount / data.targetCount) * 100) : 0;
+      document.getElementById(`browser-progress-${data.workerId}`).style.width = pct + '%';
     }
 
     function updateBotStatus(status) {
@@ -1144,11 +2052,11 @@
     }
 
     // ── Collect Config ──
+    let selectedAEs = [];
+
     function collectConfig() {
       const statusChecks = document.querySelectorAll('.status-check:checked');
       const useDb = document.getElementById('toggleUseDbNames').checked;
-      const aeCheckboxes = document.querySelectorAll('.ae-check:checked');
-      const aes = Array.from(aeCheckboxes).map(cb => cb.value);
 
       return {
         formUrl: document.getElementById('inputURL').value,
@@ -1156,10 +2064,11 @@
         kota: document.getElementById('inputKota').value,
         bm: document.getElementById('inputBM').value,
         asm: document.getElementById('inputASM').value,
-        aes: aes,
-        totalSubmissions: parseInt(document.getElementById('sliderSubmissions').value),
+        aes: selectedAEs,
+        totalSubmissions: parseInt(document.getElementById('inputNumSubmissions').value) || 1,
         delayMin: parseInt(document.getElementById('inputDelayMin').value) * 1000,
         delayMax: parseInt(document.getElementById('inputDelayMax').value) * 1000,
+        concurrencyLimit: parseInt(document.getElementById('inputConcurrency').value) || 5,
         autoGenerateHP: document.getElementById('toggleAutoHP').checked,
         showBrowser: document.getElementById('toggleShowBrowser').checked,
         useDatabaseNames: useDb,
@@ -1172,10 +2081,7 @@
     // ── Validate ──
     function validateConfig(cfg) {
       const errors = [];
-      if (!cfg.kota) errors.push('Kota wajib diisi');
-      if (!cfg.asm) errors.push('ASM wajib diisi');
       if (cfg.aes.length === 0) errors.push('Minimal 1 AE harus dicentang');
-      if (cfg.aes.length > 20) errors.push('Maksimal 20 AE yang dapat dipilih bersamaan');
       if (!cfg.useDatabaseNames && cfg.namaCapel.length === 0) {
         errors.push('Minimal 1 Nama Capel kustom harus ditambahkan jika tidak menggunakan database');
       }
@@ -1202,7 +2108,11 @@
       document.getElementById('statFailed').textContent = '0';
       document.getElementById('progressBar').style.width = '0%';
 
-      fetch('/api/start', {
+      // Reset browser status
+      document.getElementById('browserProgressContainer').innerHTML = '';
+      document.getElementById('browserProgressSection').style.display = 'none';
+
+      fetchWithAuth('/api/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cfg),
@@ -1220,12 +2130,480 @@
 
     // ── Stop Bot ──
     function stopBot() {
-      fetch('/api/stop', { method: 'POST' })
+      fetchWithAuth('/api/stop', { method: 'POST' })
         .then(r => r.json())
         .then(data => {
           addLog('Perintah stop dikirim.', 'warning');
         })
         .catch(err => addLog('Network error: ' + err.message, 'error'));
+    }
+
+    // ── Scheduling Logic ──
+
+    function populateScheduleAEDropdown() {
+      const select = document.getElementById('scheduleAE');
+      const currentValue = select ? select.value : '';
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Pilih AE --</option>';
+      
+      if (selectedAEs && selectedAEs.length > 0) {
+        const grpSel = document.createElement('optgroup');
+        grpSel.label = '── AE Terpilih (Dashboard) ──';
+        selectedAEs.forEach(ae => {
+          const opt = document.createElement('option');
+          opt.value = ae.name;
+          opt.textContent = `${ae.name} (${ae.kota || 'Jateng Utara'})`;
+          grpSel.appendChild(opt);
+        });
+        select.appendChild(grpSel);
+      }
+      
+      if (masterData && masterData.aeMap) {
+        const grpAll = document.createElement('optgroup');
+        grpAll.label = '── Semua AE (Master Data) ──';
+        for (const [asm, aes] of Object.entries(masterData.aeMap)) {
+          aes.forEach(aeName => {
+            const opt = document.createElement('option');
+            opt.value = aeName;
+            opt.textContent = `${aeName} (ASM: ${asm.replace(/\s+\.$/, '')})`;
+            grpAll.appendChild(opt);
+          });
+        }
+        select.appendChild(grpAll);
+      }
+      
+      if (currentValue) {
+        select.value = currentValue;
+      }
+    }
+
+    async function loadSchedules() {
+      try {
+        const r = await fetchWithAuth('/api/schedules');
+        const res = await r.json();
+        if (res.success && res.schedules) {
+          schedulesList = res.schedules;
+          renderSchedulesTable();
+        }
+      } catch (err) {
+        console.error('Gagal mengambil jadwal:', err.message);
+      }
+    }
+
+    async function saveSchedulesToServer() {
+      try {
+        const r = await fetchWithAuth('/api/schedules', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(schedulesList)
+        });
+        const res = await r.json();
+        if (res.success) {
+          renderSchedulesTable();
+        } else {
+          showAlert('Gagal', 'Gagal menyimpan jadwal: ' + res.error, 'error');
+        }
+      } catch (err) {
+        showAlert('Error', 'Gagal menyimpan jadwal: ' + err.message, 'error');
+      }
+    }
+
+    function addSchedule() {
+      const aeName = document.getElementById('scheduleAE').value;
+      const timeVal = document.getElementById('scheduleTime').value;
+      const submissionsVal = parseInt(document.getElementById('scheduleSubmissions').value) || 5;
+
+      if (!aeName) {
+        showAlert('Peringatan', 'Silakan pilih AE terlebih dahulu!', 'warning');
+        return;
+      }
+      if (!timeVal) {
+        showAlert('Peringatan', 'Silakan tentukan waktu eksekusi!', 'warning');
+        return;
+      }
+
+      // Check if AE is in selected AEs, or resolve directly from masterData
+      let aeItem = selectedAEs.find(item => item.name === aeName);
+      if (!aeItem && masterData) {
+        let foundAsm = '';
+        let foundBM = '';
+        let foundKota = '';
+        let foundArea = 'REGULER';
+        
+        for (const [asmName, aeList] of Object.entries(masterData.aeMap || {})) {
+          if (aeList.some(a => a.trim().toUpperCase() === aeName.trim().toUpperCase())) {
+            foundAsm = asmName;
+            break;
+          }
+        }
+        if (foundAsm && masterData.asmMap) {
+          for (const [bmName, asmList] of Object.entries(masterData.asmMap)) {
+            if (asmList.some(a => a.trim().toUpperCase() === foundAsm.trim().toUpperCase())) {
+              foundBM = bmName;
+              break;
+            }
+          }
+        }
+        if (foundBM && masterData.kotaMap) {
+          const k = masterData.kotaMap.find(item => item.bm.trim().toUpperCase() === foundBM.trim().toUpperCase());
+          if (k) {
+            foundKota = k.kota;
+            foundArea = k.area;
+          }
+        }
+        
+        aeItem = {
+          name: aeName,
+          asm: foundAsm,
+          bm: foundBM,
+          kota: foundKota,
+          area: foundArea
+        };
+      }
+
+      if (!aeItem) {
+        showAlert('Error', 'Data AE tidak ditemukan dalam master data.', 'error');
+        return;
+      }
+
+      // Check if duplicate schedule exists (same AE and time)
+      const duplicate = schedulesList.some(s => s.aeName === aeName && s.time === timeVal);
+      if (duplicate) {
+        showAlert('Peringatan', `Jadwal untuk ${aeName} pada pukul ${timeVal} sudah ada!`, 'warning');
+        return;
+      }
+
+      const newSched = {
+        id: 'sched_' + Date.now(),
+        aeName: aeItem.name,
+        area: aeItem.area || 'REGULER',
+        kota: aeItem.kota || '',
+        bm: aeItem.bm || '',
+        asm: aeItem.asm || '',
+        time: timeVal,
+        totalSubmissions: submissionsVal,
+        active: true,
+        lastRun: null
+      };
+
+      schedulesList.push(newSched);
+      saveSchedulesToServer();
+      addLog(`Jadwal baru ditambahkan untuk AE ${aeName} pukul ${timeVal} WIB`, 'success');
+    }
+
+    function deleteSchedule(id) {
+      Swal.fire({
+        title: 'Hapus Jadwal?',
+        text: 'Apakah Anda yakin ingin menghapus jadwal ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff6b6b',
+        cancelButtonColor: '#1e3a5f',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        background: '#1a1a2e',
+        color: '#e8e8f0'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          schedulesList = schedulesList.filter(s => s.id !== id);
+          saveSchedulesToServer();
+          addLog('Jadwal berhasil dihapus.', 'warning');
+        }
+      });
+    }
+
+    function toggleSchedule(id) {
+      const sched = schedulesList.find(s => s.id === id);
+      if (sched) {
+        sched.active = !sched.active;
+        saveSchedulesToServer();
+        addLog(`Jadwal untuk ${sched.aeName} pukul ${sched.time} ${sched.active ? 'diaktifkan' : 'dinonaktifkan'}.`, 'info');
+      }
+    }
+
+    function openEditScheduleModal(id) {
+      const sched = schedulesList.find(s => s.id === id);
+      if (!sched) return;
+
+      Swal.fire({
+        title: '✏️ Edit Jadwal AE',
+        html: `
+          <div style="text-align: left; display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.85rem; margin-top: 0.5rem;">
+            <div>
+              <label style="color: var(--text-secondary); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; font-weight: 600;">Nama AE</label>
+              <input type="text" value="${escapeHtml(sched.aeName)}" disabled style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-muted); cursor: not-allowed; font-weight: bold;" />
+            </div>
+            <div>
+              <label style="color: var(--text-secondary); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; font-weight: 600;">Wilayah & ASM</label>
+              <input type="text" value="${escapeHtml(sched.kota || 'Jateng')} | ASM: ${escapeHtml(sched.asm || '-')}" disabled style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-muted); font-size: 0.75rem; cursor: not-allowed;" />
+            </div>
+            <div style="display: flex; gap: 0.8rem;">
+              <div style="flex: 1;">
+                <label style="color: var(--text-secondary); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; font-weight: 600;">Waktu Eksekusi (WIB) <span style="color: var(--error);">*</span></label>
+                <input type="time" id="editModalTime" value="${sched.time}" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 1.05rem; font-weight: bold;" />
+              </div>
+              <div style="flex: 1;">
+                <label style="color: var(--text-secondary); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; font-weight: 600;">Submissions <span style="color: var(--error);">*</span></label>
+                <input type="number" id="editModalSubmissions" value="${sched.totalSubmissions || 5}" min="1" max="100" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 1.05rem; font-weight: bold;" />
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.4rem; padding: 0.6rem 0.8rem; background: rgba(255, 255, 255, 0.04); border-radius: 8px; border: 1px solid var(--border);">
+              <input type="checkbox" id="editModalActive" ${sched.active ? 'checked' : ''} style="width: 16px; height: 16px; cursor: pointer;" />
+              <label for="editModalActive" style="color: var(--text-primary); cursor: pointer; user-select: none; font-size: 0.85rem; font-weight: 600;">Jadwal Aktif (Berjalan Otomatis)</label>
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '💾 Simpan Perubahan',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#6c63ff',
+        cancelButtonColor: '#1e3a5f',
+        background: '#1a1a2e',
+        color: '#e8e8f0',
+        preConfirm: () => {
+          const newTime = document.getElementById('editModalTime').value;
+          const newSubmissions = parseInt(document.getElementById('editModalSubmissions').value);
+          const newActive = document.getElementById('editModalActive').checked;
+
+          if (!newTime) {
+            Swal.showValidationMessage('Waktu eksekusi tidak boleh kosong!');
+            return false;
+          }
+          if (!newSubmissions || newSubmissions < 1) {
+            Swal.showValidationMessage('Jumlah submissions minimal 1!');
+            return false;
+          }
+
+          // Check duplicate time for same AE if time changed
+          const duplicate = schedulesList.some(s => s.id !== id && s.aeName === sched.aeName && s.time === newTime);
+          if (duplicate) {
+            Swal.showValidationMessage(`Jadwal untuk ${sched.aeName} pada pukul ${newTime} sudah ada!`);
+            return false;
+          }
+
+          return { newTime, newSubmissions, newActive };
+        }
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          sched.time = result.value.newTime;
+          sched.totalSubmissions = result.value.newSubmissions;
+          sched.active = result.value.newActive;
+
+          saveSchedulesToServer();
+          renderSchedulesTable();
+          addLog(`Jadwal untuk ${sched.aeName} berhasil diperbarui (Waktu: ${sched.time} WIB, Target: ${sched.totalSubmissions}x, Aktif: ${sched.active ? 'Ya' : 'Tidak'})`, 'success');
+        }
+      });
+    }
+
+    async function runScheduleNow(id) {
+      const sched = schedulesList.find(s => s.id === id);
+      if (!sched) return;
+
+      const result = await Swal.fire({
+        title: 'Jalankan Jadwal Sekarang?',
+        text: `Jadwal untuk ${sched.aeName} (${sched.totalSubmissions}x submissions) akan langsung dieksekusi sekarang.`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#1e3a5f',
+        confirmButtonText: '▶ Ya, Jalankan!',
+        cancelButtonText: 'Batal',
+        background: '#1a1a2e',
+        color: '#e8e8f0'
+      });
+
+      if (result.isConfirmed) {
+        try {
+          addLog(`[Manual Run] Memulai eksekusi jadwal ${sched.aeName}...`, 'bot');
+          const r = await fetchWithAuth(`/api/schedules/run/${id}`, { method: 'POST' });
+          const res = await r.json();
+          if (res.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Eksekusi Dimulai!',
+              text: `Bot sedang mengeksekusi jadwal untuk ${sched.aeName}. Lihat progres pada log console.`,
+              timer: 2500,
+              showConfirmButton: false,
+              background: '#1a1a2e',
+              color: '#e8e8f0'
+            });
+          } else {
+            showAlert('Gagal', res.error || 'Gagal menjalankan jadwal', 'error');
+          }
+        } catch (err) {
+          showAlert('Error', 'Gagal memproses request: ' + err.message, 'error');
+        }
+      }
+    }
+
+    async function retryAllFailedSchedules() {
+      const failedSchedules = schedulesList.filter(s => s.lastRun && (s.lastRun.status === 'Gagal' || s.lastRun.status === 'Sebagian Sukses'));
+      if (failedSchedules.length === 0) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Tidak Ada Jadwal Gagal',
+          text: 'Semua jadwal berstatus sukses atau belum pernah dijalankan.',
+          background: '#1a1a2e',
+          color: '#e8e8f0'
+        });
+        return;
+      }
+
+      const result = await Swal.fire({
+        title: 'Ulangi Semua Jadwal Gagal?',
+        text: `Ditemukan ${failedSchedules.length} jadwal yang gagal / sebagian sukses. Sistem akan menjalankan ulang satu per satu secara berurutan.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#f59e0b',
+        cancelButtonColor: '#1e3a5f',
+        confirmButtonText: '🔄 Ya, Ulangi Semua!',
+        cancelButtonText: 'Batal',
+        background: '#1a1a2e',
+        color: '#e8e8f0'
+      });
+
+      if (result.isConfirmed) {
+        try {
+          addLog(`[Retry Engine] Memulai proses pengulangan untuk ${failedSchedules.length} jadwal gagal...`, 'system');
+          const r = await fetchWithAuth('/api/schedules/retry-failed', { method: 'POST' });
+          const res = await r.json();
+          if (res.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Proses Retry Dimulai!',
+              text: res.message,
+              timer: 3000,
+              showConfirmButton: false,
+              background: '#1a1a2e',
+              color: '#e8e8f0'
+            });
+          } else {
+            showAlert('Gagal', res.error || 'Gagal memproses retry', 'error');
+          }
+        } catch (err) {
+          showAlert('Error', 'Gagal memproses request: ' + err.message, 'error');
+        }
+      }
+    }
+
+    function renderSchedulesTable() {
+      const tbody = document.getElementById('scheduleTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (schedulesList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Belum ada jadwal dikonfigurasi. Pilih AE dan tentukan waktu di atas.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      schedulesList.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border)';
+        tr.style.transition = 'background 0.2s';
+        tr.className = 'schedule-row';
+        
+        let lastRunText = '-';
+        const isRunning = s.lastRun && s.lastRun.status === 'Sedang Berjalan';
+
+        if (s.lastRun) {
+          let timeDisplay = s.lastRun.time || '';
+          if (timeDisplay && timeDisplay.includes('T')) {
+            const runDate = new Date(timeDisplay);
+            timeDisplay = runDate.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit' }) + ' ' + runDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+          }
+
+          if (isRunning) {
+            lastRunText = `<span style="font-size: 0.72rem; color: #38bdf8; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:9px; height:9px; border:2px solid #38bdf8; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+              Sedang Berjalan (${s.lastRun.progress || '0/' + s.totalSubmissions})
+            </span>`;
+          } else {
+            const isSuccess = s.lastRun.status === 'Sukses';
+            const isFailed = s.lastRun.status === 'Gagal';
+            const statusColor = isSuccess ? 'var(--success)' : (isFailed ? 'var(--error)' : 'var(--accent)');
+            const tooltipTitle = s.lastRun.details ? `title="${escapeHtml(s.lastRun.details)}"` : '';
+
+            lastRunText = `<span style="font-size: 0.72rem; color: var(--text-secondary);">${timeDisplay}</span> 
+            <span ${tooltipTitle} style="font-size: 0.72rem; color: ${statusColor}; font-weight: bold; cursor: ${s.lastRun.details ? 'help' : 'default'};">
+              (${s.lastRun.status || 'Selesai'}: S:${s.lastRun.success || 0} G:${s.lastRun.failed || 0})
+            </span>`;
+          }
+        }
+
+        const kotaStr = s.kota || 'Jateng Utara';
+        const bmStr = (s.bm || '').replace(/\s+\.$/, '') || '-';
+        const asmStr = (s.asm || '').replace(/\s+\.$/, '') || '-';
+
+        const runBtn = isRunning
+          ? `<button disabled title="Sedang berjalan..." style="background: none; border: none; color: var(--text-muted); font-size: 1.05rem; cursor: not-allowed; padding: 0.2rem 0.35rem; opacity: 0.5;">⏳</button>`
+          : `<button onclick="runScheduleNow('${s.id}')" title="Jalankan Sekarang / Ulangi" style="background: none; border: none; color: #10b981; font-size: 1.05rem; cursor: pointer; padding: 0.2rem 0.35rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">🔄</button>`;
+
+        tr.innerHTML = `
+          <td style="padding: 0.75rem 0.5rem; font-weight: 600; color: var(--text-primary);">${s.aeName}</td>
+          <td style="padding: 0.75rem 0.5rem; color: var(--text-secondary); font-size: 0.75rem;">${kotaStr} / BM: ${bmStr} <br> <span style="color: var(--text-muted);">ASM: ${asmStr}</span></td>
+          <td style="padding: 0.75rem 0.5rem; text-align: center; font-weight: 700; color: var(--accent); font-size: 0.9rem;">${s.time} WIB</td>
+          <td style="padding: 0.75rem 0.5rem; text-align: center; font-weight: 700; color: var(--text-primary);">${s.totalSubmissions}x</td>
+          <td style="padding: 0.75rem 0.5rem; text-align: center;">
+            <label class="toggle" style="margin: 0 auto;">
+              <input type="checkbox" ${s.active ? 'checked' : ''} onchange="toggleSchedule('${s.id}')" />
+              <span class="toggle-slider"></span>
+            </label>
+          </td>
+          <td style="padding: 0.75rem 0.5rem; line-height: 1.4;">${lastRunText}</td>
+          <td style="padding: 0.75rem 0.5rem; text-align: center; white-space: nowrap;">
+            ${runBtn}
+            <button onclick="openEditScheduleModal('${s.id}')" title="Edit Jadwal" style="background: none; border: none; color: var(--accent); font-size: 1.05rem; cursor: pointer; padding: 0.2rem 0.35rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">✏️</button>
+            <button onclick="deleteSchedule('${s.id}')" title="Hapus Jadwal" style="background: none; border: none; color: var(--error); font-size: 1.05rem; cursor: pointer; padding: 0.2rem 0.35rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">🗑</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadSettings() {
+      try {
+        const response = await fetchWithAuth('/api/settings');
+        const res = await response.json();
+        if (res.success && res.settings) {
+          const s = res.settings;
+          
+          document.getElementById('inputURL').value = s.formUrl || '';
+          document.getElementById('inputArea').value = s.area || 'REGULER';
+          document.getElementById('inputNumSubmissions').value = s.totalSubmissions || 5;
+          document.getElementById('sliderSubmissions').value = s.totalSubmissions || 5;
+          document.getElementById('inputDelayMin').value = (s.delayMin / 1000) || 3;
+          document.getElementById('inputDelayMax').value = (s.delayMax / 1000) || 6;
+          document.getElementById('inputConcurrency').value = s.concurrencyLimit || 5;
+          document.getElementById('toggleAutoHP').checked = s.autoGenerateHP !== false;
+          document.getElementById('toggleShowBrowser').checked = s.showBrowser !== false;
+          document.getElementById('toggleUseDbNames').checked = s.useDatabaseNames !== false;
+          toggleCustomNamesUI();
+          
+          if (s.namaCapel && s.namaCapel.length > 0) {
+            tagsData.nama = s.namaCapel;
+            renderTags('tagsNama', 'tagInputNama', 'nama');
+          }
+          
+          if (s.ispList) {
+            document.getElementById('inputISP').value = s.ispList.join(', ');
+          }
+          
+          if (s.statusLead) {
+            document.querySelectorAll('.status-check').forEach(c => {
+              c.checked = s.statusLead.includes(c.value);
+            });
+          }
+
+          addLog('Berhasil memuat pengaturan bot terakhir.', 'success');
+        }
+      } catch (err) {
+        console.warn('Gagal memuat settings.json:', err.message);
+      }
     }
 
     // ── Cascading Dropdowns Logic ──
@@ -1234,7 +2612,7 @@
     async function loadMasterData() {
       addLog('Mengambil data master dari Google Apps Script...', 'system');
       try {
-        const response = await fetch('/api/master-data');
+        const response = await fetchWithAuth('/api/master-data');
         const res = await response.json();
         if (res.success && res.data) {
           masterData = res.data;
@@ -1245,6 +2623,35 @@
         }
       } catch (err) {
         addLog('Kesalahan koneksi mengambil data master: ' + err.message, 'error');
+      }
+    }
+
+    async function syncMasterData() {
+      const btn = document.getElementById('btnSyncMaster');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '⏳ Syncing...';
+      addLog('Menyinkronkan data master dari Google Sheets (bisa memakan waktu beberapa saat)...', 'system');
+      
+      try {
+        const urlInput = document.getElementById('inputURL').value;
+        const response = await fetchWithAuth(`/api/master-data?refresh=true&url=${encodeURIComponent(urlInput)}`);
+        const res = await response.json();
+        if (res.success && res.data) {
+          masterData = res.data;
+          addLog('Berhasil menyinkronkan data master wilayah terbaru!', 'success');
+          populateKotas();
+          alert('Berhasil menyinkronkan data master AE, ASM, dan Kota terbaru!');
+        } else {
+          addLog('Gagal menyinkronkan data master: ' + res.error, 'error');
+          alert('Gagal menyinkronkan data master: ' + res.error);
+        }
+      } catch (err) {
+        addLog('Kesalahan koneksi menyinkronkan data master: ' + err.message, 'error');
+        alert('Kesalahan koneksi menyinkronkan data master: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
       }
     }
 
@@ -1334,17 +2741,37 @@
               cb.type = 'checkbox';
               cb.value = ae;
               cb.className = 'ae-check';
-              cb.addEventListener('change', (e) => {
-                const checked = document.querySelectorAll('.ae-check:checked');
-                if (checked.length > 20) {
-                  alert('Maksimal 20 AE yang dapat dipilih secara bersamaan.');
-                  e.target.checked = false;
+              
+              // Check if already in selectedAEs
+              const isChecked = selectedAEs.some(item => item.name === ae);
+              cb.checked = isChecked;
+
+              cb.onchange = () => {
+                const area = document.getElementById('inputArea').value;
+                const kotaVal = document.getElementById('inputKota').value;
+                const bmVal = document.getElementById('inputBM').value;
+
+                if (cb.checked) {
+                  if (!selectedAEs.some(item => item.name === ae)) {
+                    selectedAEs.push({
+                      name: ae,
+                      area: (cityData && cityData.area) || area,
+                      kota: (cityData && cityData.kota) || kotaVal,
+                      bm: (cityData && cityData.bm) || bmVal,
+                      asm: asm
+                    });
+                  }
+                } else {
+                  selectedAEs = selectedAEs.filter(item => item.name !== ae);
                 }
+                
                 const allCheckboxes = document.querySelectorAll('.ae-check');
                 const checkedCheckboxes = document.querySelectorAll('.ae-check:checked');
-                checkAll.checked = (allCheckboxes.length === checkedCheckboxes.length);
+                checkAll.checked = (allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length);
+                
+                renderAEsTags();
                 updateSummary();
-              });
+              };
 
               label.appendChild(cb);
               label.appendChild(document.createTextNode(' ' + ae));
@@ -1358,32 +2785,96 @@
           checkAll.disabled = true;
         }
 
+        // Sync Select All checkbox state
+        const allCheckboxes = document.querySelectorAll('.ae-check');
+        const checkedCheckboxes = document.querySelectorAll('.ae-check:checked');
+        checkAll.checked = (allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length);
+
         // Wire Select All checkbox
         checkAll.onclick = () => {
           const allCheckboxes = document.querySelectorAll('.ae-check');
+          const area = document.getElementById('inputArea').value;
+          const kotaVal = document.getElementById('inputKota').value;
+          const bmVal = document.getElementById('inputBM').value;
+          
           if (checkAll.checked) {
-            let count = 0;
             allCheckboxes.forEach((cb) => {
-              if (count < 20) {
+              const ae = cb.value;
+              let foundAsm = '';
+              for (const [asmName, aeList] of Object.entries(masterData.aeMap)) {
+                if (aeList.includes(ae)) {
+                  foundAsm = asmName;
+                  break;
+                }
+              }
+
+              if (!cb.checked) {
                 cb.checked = true;
-                count++;
-              } else {
-                cb.checked = false;
+                selectedAEs.push({
+                  name: ae,
+                  area: (cityData && cityData.area) || area,
+                  kota: (cityData && cityData.kota) || kotaVal,
+                  bm: (cityData && cityData.bm) || bmVal,
+                  asm: foundAsm
+                });
               }
             });
-            if (allCheckboxes.length > 20) {
-              alert('Pilih Semua mencentang 20 AE pertama untuk mencegah overload CPU.');
-              checkAll.checked = false;
-            }
           } else {
-            allCheckboxes.forEach(cb => cb.checked = false);
+            allCheckboxes.forEach(cb => {
+              cb.checked = false;
+              selectedAEs = selectedAEs.filter(item => item.name !== cb.value);
+            });
           }
+          renderAEsTags();
           updateSummary();
         };
       } else {
         container.innerHTML = '<div style="font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem; text-align: center; grid-column: span 2;">-- Pilih Kota terlebih dahulu --</div>';
         checkAll.disabled = true;
       }
+      updateSummary();
+    }
+
+    function renderAEsTags() {
+      const container = document.getElementById('selectedAEsTags');
+      container.innerHTML = '';
+      
+      if (selectedAEs.length === 0) {
+        container.innerHTML = '<span style="font-size: 0.75rem; color: var(--text-muted);">Belum ada AE yang dipilih...</span>';
+        populateScheduleAEDropdown();
+        return;
+      }
+      
+      selectedAEs.forEach(aeItem => {
+        const tag = document.createElement('div');
+        tag.className = 'ae-tag';
+        tag.innerHTML = `
+          <span>${aeItem.name} (${aeItem.kota})</span>
+          <span class="ae-tag-remove" onclick="removeAETag('${aeItem.name.replace(/'/g, "\\'")}')">×</span>
+        `;
+        container.appendChild(tag);
+      });
+      populateScheduleAEDropdown();
+    }
+    
+    function removeAETag(aeName) {
+      selectedAEs = selectedAEs.filter(item => item.name !== aeName);
+      
+      const checkboxes = document.querySelectorAll('.ae-check');
+      checkboxes.forEach(cb => {
+        if (cb.value === aeName) {
+          cb.checked = false;
+        }
+      });
+      
+      const checkAll = document.getElementById('checkAllAE');
+      const allCheckboxes = document.querySelectorAll('.ae-check');
+      const checkedCheckboxes = document.querySelectorAll('.ae-check:checked');
+      if (checkAll) {
+        checkAll.checked = (allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length);
+      }
+      
+      renderAEsTags();
       updateSummary();
     }
 
@@ -1410,8 +2901,7 @@
       });
 
       updateSummary();
-      connectWS();
-      loadMasterData();
+      checkAuth();
     });
   </script>
 </body>

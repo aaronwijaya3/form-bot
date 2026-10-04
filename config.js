@@ -9,6 +9,10 @@
  */
 
 module.exports = {
+  // ── PIN untuk Akses Bot Dashboard ──────────────────────────
+  // PIN default untuk mengakses dashboard. Silakan ganti dengan PIN pilihan Anda.
+  BOT_PIN: process.env.BOT_PIN || '1234',
+
   // ── URL Form ──────────────────────────────────────────────
   FORM_URL: 'https://script.google.com/macros/s/AKfycbwSM6dh2oTU3SPgEwmSCCbdncvAUXry3IW61DFJUad5EJ38wzHc5FZIhQBgxRR4lAc3/exec',
 

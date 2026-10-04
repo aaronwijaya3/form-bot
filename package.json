@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "bot": "node bot.js"
+    "bot": "node bot.js",
+    "deploy": "node deploy.js"
   },
   "dependencies": {
     "express": "^4.21.0",

@@ -1,0 +1,43 @@
+{
+  "formUrl": "https://script.google.com/macros/s/AKfycbwSM6dh2oTU3SPgEwmSCCbdncvAUXry3IW61DFJUad5EJ38wzHc5FZIhQBgxRR4lAc3/exec",
+  "area": "REGULER",
+  "kota": "Semarang 1",
+  "bm": "ASEP WIDIYARSO .",
+  "asm": "OTOMATIS",
+  "totalSubmissions": 20,
+  "delayMin": 3000,
+  "delayMax": 6000,
+  "concurrencyLimit": 5,
+  "autoGenerateHP": true,
+  "showBrowser": false,
+  "useDatabaseNames": true,
+  "namaCapel": [
+    "Budi Santoso",
+    "Siti Rahayu",
+    "Ahmad Pratama",
+    "Dewi Lestari",
+    "Rizki Ramadhan",
+    "Fitri Handayani",
+    "Agus Supriyanto",
+    "Rina Wulandari",
+    "Dimas Aditya",
+    "Sri Wahyuni"
+  ],
+  "ispList": [
+    "Indihome",
+    "Biznet",
+    "MNC Play",
+    "First Media",
+    "MyRepublic",
+    "Tidak Ada",
+    "CBN",
+    "Oxygen",
+    "Iconnet",
+    "XL Home"
+  ],
+  "statusLead": [
+    "COOL",
+    "WARM",
+    "HOT"
+  ]
+}
